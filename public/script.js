@@ -312,7 +312,10 @@ class MediaLibrary {
         files.forEach(file => {
             const parsed = this.parseFileName(file.name);
             const showName = parsed.show || 'Other Media';
-            const season = parsed.season || 'Unknown';
+            
+            // For movies, use 'Movie' as the season key
+            // For TV shows, use the actual season
+            const season = parsed.isMovie ? 'Movie' : (parsed.season || 'Unknown');
             
             if (!grouped[showName]) {
                 grouped[showName] = {};
@@ -328,14 +331,16 @@ class MediaLibrary {
             });
         });
         
-        // Sort episodes within each season
+        // Sort episodes within each season (only for TV shows)
         Object.keys(grouped).forEach(showName => {
             Object.keys(grouped[showName]).forEach(season => {
-                grouped[showName][season].sort((a, b) => {
-                    const aEp = parseInt(a.parsedName.episode) || 0;
-                    const bEp = parseInt(b.parsedName.episode) || 0;
-                    return aEp - bEp;
-                });
+                if (season !== 'Movie') {
+                    grouped[showName][season].sort((a, b) => {
+                        const aEp = parseInt(a.parsedName.episode) || 0;
+                        const bEp = parseInt(b.parsedName.episode) || 0;
+                        return aEp - bEp;
+                    });
+                }
             });
         });
         
@@ -396,21 +401,23 @@ class MediaLibrary {
         const seasonSection = document.createElement('div');
         seasonSection.className = 'season-section';
         
-        // Season header
-        const seasonHeader = document.createElement('div');
-        seasonHeader.className = 'season-header';
-        
-        const seasonTitle = document.createElement('h3');
-        seasonTitle.className = 'season-title';
-        seasonTitle.textContent = `Season ${season.substring(1)}`; // Remove 'S' prefix
-        
-        const seasonBadge = document.createElement('span');
-        seasonBadge.className = 'season-badge';
-        seasonBadge.textContent = season;
-        
-        seasonHeader.appendChild(seasonTitle);
-        seasonHeader.appendChild(seasonBadge);
-        seasonSection.appendChild(seasonHeader);
+        // Only show season header for TV shows, not movies
+        if (season !== 'Movie') {
+            const seasonHeader = document.createElement('div');
+            seasonHeader.className = 'season-header';
+            
+            const seasonTitle = document.createElement('h3');
+            seasonTitle.className = 'season-title';
+            seasonTitle.textContent = `Season ${season.substring(1)}`; // Remove 'S' prefix
+            
+            const seasonBadge = document.createElement('span');
+            seasonBadge.className = 'season-badge';
+            seasonBadge.textContent = season;
+            
+            seasonHeader.appendChild(seasonTitle);
+            seasonHeader.appendChild(seasonBadge);
+            seasonSection.appendChild(seasonHeader);
+        }
         
         // Episodes grid
         const episodesGrid = document.createElement('div');
@@ -434,9 +441,13 @@ class MediaLibrary {
         const episodeHeader = document.createElement('div');
         episodeHeader.className = 'episode-header';
         
-        const episodeNumber = document.createElement('span');
-        episodeNumber.className = 'episode-number';
-        episodeNumber.textContent = file.parsedName.fullEpisode;
+        // Only show episode number for TV shows, not movies
+        if (file.parsedName && !file.parsedName.isMovie && file.parsedName.fullEpisode) {
+            const episodeNumber = document.createElement('span');
+            episodeNumber.className = 'episode-number';
+            episodeNumber.textContent = file.parsedName.fullEpisode;
+            episodeHeader.appendChild(episodeNumber);
+        }
         
         const playBtn = document.createElement('button');
         playBtn.className = 'episode-play-btn';
@@ -446,7 +457,6 @@ class MediaLibrary {
             this.playVideo(file);
         };
         
-        episodeHeader.appendChild(episodeNumber);
         episodeHeader.appendChild(playBtn);
         
         // Episode title

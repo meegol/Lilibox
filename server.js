@@ -217,23 +217,25 @@ async function enhanceWithTMDBData(files) {
 }
 
 function parseFileName(fileName) {
-    // Parse "The Summer I Turned Pretty S02E01.mkv" format
-    const match = fileName.match(/^(.+?)\s+(S\d+E\d+)/i);
-    if (match) {
+    // Parse "The Summer I Turned Pretty S02E01.mkv" format (TV Show)
+    const tvMatch = fileName.match(/^(.+?)\s+(S\d+E\d+)/i);
+    if (tvMatch) {
         return {
-            show: match[1].trim(),
-            season: match[2].substring(0, 3), // S02
-            episode: match[2].substring(3),   // E01
-            fullEpisode: match[2]             // S02E01
+            show: tvMatch[1].trim(),
+            season: tvMatch[2].substring(0, 3), // S02
+            episode: tvMatch[2].substring(3),   // E01
+            fullEpisode: tvMatch[2],            // S02E01
+            isMovie: false
         };
     }
     
-    // Fallback for other formats
+    // For files without season/episode pattern, treat as movies
     return {
         show: fileName.replace(/\.[^/.]+$/, ""), // Remove extension
-        season: 'Unknown',
-        episode: '01',
-        fullEpisode: 'Unknown'
+        season: null,
+        episode: null,
+        fullEpisode: null,
+        isMovie: true
     };
 }
 

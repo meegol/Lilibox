@@ -83,13 +83,14 @@ async function searchShowOnTMDB(showName) {
         const cleanName = showName.replace(/[Ss]\d+[Ee]\d+.*$/, '').trim();
         const encodedName = encodeURIComponent(cleanName);
         
-        const url = `${TMDB_BASE_URL}/search/tv?api_key=${TMDB_API_KEY}&query=${encodedName}&language=en-US&page=1`;
-        console.log(`Searching TMDB for: ${cleanName}`);
-        const response = await makeTMDBRequest(url);
+        // First try TV shows
+        const tvUrl = `${TMDB_BASE_URL}/search/tv?api_key=${TMDB_API_KEY}&query=${encodedName}&language=en-US&page=1`;
+        console.log(`Searching TMDB for TV show: ${cleanName}`);
+        const tvResponse = await makeTMDBRequest(tvUrl);
         
-        if (response.results && response.results.length > 0) {
-            const show = response.results[0];
-            console.log(`Found TMDB data for: ${show.name}`);
+        if (tvResponse.results && tvResponse.results.length > 0) {
+            const show = tvResponse.results[0];
+            console.log(`Found TMDB TV data for: ${show.name}`);
             return {
                 id: show.id,
                 name: show.name,
@@ -97,9 +98,31 @@ async function searchShowOnTMDB(showName) {
                 poster_path: show.poster_path,
                 backdrop_path: show.backdrop_path,
                 first_air_date: show.first_air_date,
-                vote_average: show.vote_average
+                vote_average: show.vote_average,
+                media_type: 'tv'
             };
         }
+        
+        // If no TV show found, try movies
+        const movieUrl = `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodedName}&language=en-US&page=1`;
+        console.log(`Searching TMDB for movie: ${cleanName}`);
+        const movieResponse = await makeTMDBRequest(movieUrl);
+        
+        if (movieResponse.results && movieResponse.results.length > 0) {
+            const movie = movieResponse.results[0];
+            console.log(`Found TMDB movie data for: ${movie.title}`);
+            return {
+                id: movie.id,
+                name: movie.title,
+                overview: movie.overview,
+                poster_path: movie.poster_path,
+                backdrop_path: movie.backdrop_path,
+                first_air_date: movie.release_date,
+                vote_average: movie.vote_average,
+                media_type: 'movie'
+            };
+        }
+        
         console.log(`No TMDB results found for: ${cleanName}`);
         return null;
     } catch (error) {
@@ -108,9 +131,10 @@ async function searchShowOnTMDB(showName) {
     }
 }
 
-async function getShowDetails(tmdbId) {
+async function getShowDetails(tmdbId, mediaType = 'tv') {
     try {
-        const url = `${TMDB_BASE_URL}/tv/${tmdbId}?api_key=${TMDB_API_KEY}&language=en-US`;
+        const endpoint = mediaType === 'movie' ? 'movie' : 'tv';
+        const url = `${TMDB_BASE_URL}/${endpoint}/${tmdbId}?api_key=${TMDB_API_KEY}&language=en-US`;
         const response = await makeTMDBRequest(url);
         return response;
     } catch (error) {

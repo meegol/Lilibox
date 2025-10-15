@@ -270,6 +270,17 @@ body {
     margin-bottom: 1rem;
 }
 
+.show-type {
+    background: linear-gradient(135deg, #E6B2BA, #FAD0C4);
+    color: #6B5B6B;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .show-year {
     background: rgba(197, 153, 182, 0.2);
     color: #6B5B6B;

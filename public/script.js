@@ -487,11 +487,12 @@ class MediaLibrary {
         if (showData.tmdbData && showData.tmdbData.poster_url) {
             const showPoster = document.createElement('div');
             showPoster.className = 'show-poster';
+            const mediaIcon = showData.tmdbData.media_type === 'movie' ? 'fas fa-film' : 'fas fa-tv';
             showPoster.innerHTML = `
                 <img src="${showData.tmdbData.poster_url}" alt="${showData.showName}" 
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="default-poster" style="display: none;">
-                    <i class="fas fa-tv"></i>
+                    <i class="${mediaIcon}"></i>
                 </div>
             `;
             showHeader.appendChild(showPoster);
@@ -514,6 +515,14 @@ class MediaLibrary {
         if (showData.tmdbData) {
             const showMeta = document.createElement('div');
             showMeta.className = 'show-meta';
+            
+            // Add media type badge
+            if (showData.tmdbData.media_type) {
+                const typeSpan = document.createElement('span');
+                typeSpan.className = 'show-type';
+                typeSpan.textContent = showData.tmdbData.media_type === 'movie' ? 'Movie' : 'TV Show';
+                showMeta.appendChild(typeSpan);
+            }
             
             if (showData.tmdbData.first_air_date) {
                 const year = new Date(showData.tmdbData.first_air_date).getFullYear();

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiliBox - Media Streaming</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-play-circle"></i>
+                    LiliBox
+                </h1>
+                <div class="status-indicator">
+                    <span id="connectionStatus" class="status-online">
+                        <i class="fas fa-circle"></i>
+                        Connected
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading Screen -->
+            <div id="loadingScreen" class="loading-screen">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <p>Loading your media library...</p>
+                </div>
+            </div>
+
+            <!-- Media Library -->
+            <div id="mediaLibrary" class="media-library" style="display: none;">
+                <div class="library-header">
+                    <h2>Your Media Library</h2>
+                    <div class="header-controls">
+                        <div class="search-container">
+                            <input type="text" id="searchInput" placeholder="Search movies and shows...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <button id="refreshBtn" class="refresh-btn" title="Refresh library">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="media-grid" id="mediaGrid">
+                    <!-- Grouped media sections will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Video Player Modal -->
+            <div id="videoModal" class="video-modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="videoTitle">Movie Title</h3>
+                        <button id="closeModal" class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="video-container">
+                        <video id="videoPlayer" controls>
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Error Messages -->
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText"></span>
+            <button id="closeError" class="close-error">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

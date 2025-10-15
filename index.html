@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiliBox - Google Drive Media Player</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-play-circle"></i>
+                    LiliBox
+                </h1>
+                <div class="auth-section">
+                    <button id="loginBtn" class="btn btn-primary">
+                        <i class="fab fa-google"></i>
+                        Connect Google Drive
+                    </button>
+                    <button id="logoutBtn" class="btn btn-secondary" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h2>Welcome to LiliBox</h2>
+                    <p>Connect your Google Drive to access and stream your movies and shows</p>
+                    <button id="welcomeLoginBtn" class="btn btn-primary btn-large">
+                        <i class="fab fa-google"></i>
+                        Get Started
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading Screen -->
+            <div id="loadingScreen" class="loading-screen" style="display: none;">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <p>Loading your media library...</p>
+                </div>
+            </div>
+
+            <!-- Media Library -->
+            <div id="mediaLibrary" class="media-library" style="display: none;">
+                <div class="library-header">
+                    <h2>Your Media Library</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search movies and shows...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                <div class="media-grid" id="mediaGrid">
+                    <!-- Media items will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Video Player Modal -->
+            <div id="videoModal" class="video-modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="videoTitle">Movie Title</h3>
+                        <button id="closeModal" class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="video-container">
+                        <video id="videoPlayer" controls>
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Error Messages -->
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText"></span>
+            <button id="closeError" class="close-error">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Google Drive API Script -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

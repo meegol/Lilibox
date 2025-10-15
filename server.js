@@ -199,13 +199,17 @@ async function enhanceWithTMDBData(files) {
     for (const [showName, showData] of showMap) {
         if (showName !== 'Other Media') {
             try {
+                console.log(`Fetching TMDB data for: ${showName}`);
                 const tmdbData = await searchShowOnTMDB(showName);
                 if (tmdbData) {
+                    console.log(`Found TMDB data for ${showName}:`, tmdbData.name, tmdbData.media_type);
                     showData.tmdbData = {
                         ...tmdbData,
                         poster_url: tmdbData.poster_path ? `${TMDB_IMAGE_BASE_URL}${tmdbData.poster_path}` : null,
                         backdrop_url: tmdbData.backdrop_path ? `${TMDB_IMAGE_BASE_URL}${tmdbData.backdrop_path}` : null
                     };
+                } else {
+                    console.log(`No TMDB data found for: ${showName}`);
                 }
             } catch (error) {
                 console.error(`Error fetching TMDB data for ${showName}:`, error);

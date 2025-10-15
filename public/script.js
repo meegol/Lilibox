@@ -122,15 +122,20 @@ class MediaLibrary {
         
         // Check if we have the new TMDB-enhanced structure or old flat structure
         const firstItem = this.filteredFiles[0];
+        console.log('First item structure:', firstItem);
+        console.log('Has showName:', firstItem && firstItem.showName);
+        console.log('Has episodes:', firstItem && firstItem.episodes);
         
         if (firstItem && firstItem.showName && firstItem.episodes) {
             // New TMDB-enhanced structure
+            console.log('Using TMDB-enhanced structure');
             this.filteredFiles.forEach(showData => {
                 const showSection = this.createShowSectionWithTMDB(showData);
                 this.mediaGrid.appendChild(showSection);
             });
         } else {
             // Old flat structure - group files by show and season
+            console.log('Using old flat structure - grouping files');
             const groupedFiles = this.groupFilesByShowAndSeason(this.filteredFiles);
             
             // Create show sections

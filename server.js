@@ -15,8 +15,16 @@ app.use(express.static('public'));
 
 // Google Drive configuration
 const SCOPES = ['https://www.googleapis.com/auth/drive.readonly'];
-const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
-const TOKEN_PATH = path.join(__dirname, 'token.json');
+
+// Use environment variables for credentials in production
+const CREDENTIALS = process.env.GOOGLE_CREDENTIALS ? 
+    JSON.parse(process.env.GOOGLE_CREDENTIALS) : 
+    JSON.parse(fs.readFileSync(path.join(__dirname, 'credentials.json')));
+
+const TOKEN = process.env.GOOGLE_TOKEN ? 
+    JSON.parse(process.env.GOOGLE_TOKEN) : 
+    (fs.existsSync(path.join(__dirname, 'token.json')) ? 
+        JSON.parse(fs.readFileSync(path.join(__dirname, 'token.json'))) : null);
 
 // Your Google Drive folder ID where movies/shows are stored
 const MEDIA_FOLDER_ID = process.env.MEDIA_FOLDER_ID || '1iixNErqmwI5_rUspp407HMrMKsj5Hq45';
@@ -31,15 +39,13 @@ let drive;
 // Initialize Google Drive API
 async function initializeDrive() {
     try {
-        const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
-        const { client_secret, client_id, redirect_uris } = credentials.installed || credentials.web;
+        const { client_secret, client_id, redirect_uris } = CREDENTIALS.installed || CREDENTIALS.web;
         
         const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
         
-        // Check if we have a previously stored token
-        if (fs.existsSync(TOKEN_PATH)) {
-            const token = JSON.parse(fs.readFileSync(TOKEN_PATH));
-            oAuth2Client.setCredentials(token);
+        // Check if we have a token
+        if (TOKEN) {
+            oAuth2Client.setCredentials(TOKEN);
         } else {
             console.log('No token found. Please run the authentication setup.');
             return null;

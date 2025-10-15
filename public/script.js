@@ -122,20 +122,15 @@ class MediaLibrary {
         
         // Check if we have the new TMDB-enhanced structure or old flat structure
         const firstItem = this.filteredFiles[0];
-        console.log('First item structure:', firstItem);
-        console.log('Has showName:', firstItem && firstItem.showName);
-        console.log('Has episodes:', firstItem && firstItem.episodes);
         
         if (firstItem && firstItem.showName && firstItem.episodes) {
             // New TMDB-enhanced structure
-            console.log('Using TMDB-enhanced structure');
             this.filteredFiles.forEach(showData => {
                 const showSection = this.createShowSectionWithTMDB(showData);
                 this.mediaGrid.appendChild(showSection);
             });
         } else {
             // Old flat structure - group files by show and season
-            console.log('Using old flat structure - grouping files');
             const groupedFiles = this.groupFilesByShowAndSeason(this.filteredFiles);
             
             // Create show sections
@@ -567,30 +562,46 @@ class MediaLibrary {
         showHeader.appendChild(showInfo);
         showSection.appendChild(showHeader);
         
-        // Group episodes by season
-        const seasons = {};
-        showData.episodes.forEach(episode => {
-            const season = episode.parsedName.season || 'Unknown';
-            if (!seasons[season]) {
-                seasons[season] = [];
-            }
-            seasons[season].push(episode);
-        });
+        // Check if this is a movie or TV show
+        const isMovie = showData.tmdbData && showData.tmdbData.media_type === 'movie';
         
-        // Sort episodes within each season
-        Object.keys(seasons).forEach(season => {
-            seasons[season].sort((a, b) => {
-                const aEp = parseInt(a.parsedName.episode) || 0;
-                const bEp = parseInt(b.parsedName.episode) || 0;
-                return aEp - bEp;
+        if (isMovie) {
+            // For movies, just create a simple episodes grid without season grouping
+            const episodesGrid = document.createElement('div');
+            episodesGrid.className = 'episodes-grid';
+            
+            showData.episodes.forEach(episode => {
+                const episodeItem = this.createEpisodeItem(episode);
+                episodesGrid.appendChild(episodeItem);
             });
-        });
-        
-        // Create season sections
-        Object.keys(seasons).sort().forEach(season => {
-            const seasonSection = this.createSeasonSection(season, seasons[season]);
-            showSection.appendChild(seasonSection);
-        });
+            
+            showSection.appendChild(episodesGrid);
+        } else {
+            // For TV shows, group episodes by season
+            const seasons = {};
+            showData.episodes.forEach(episode => {
+                const season = episode.parsedName.season || 'Unknown';
+                if (!seasons[season]) {
+                    seasons[season] = [];
+                }
+                seasons[season].push(episode);
+            });
+            
+            // Sort episodes within each season
+            Object.keys(seasons).forEach(season => {
+                seasons[season].sort((a, b) => {
+                    const aEp = parseInt(a.parsedName.episode) || 0;
+                    const bEp = parseInt(b.parsedName.episode) || 0;
+                    return aEp - bEp;
+                });
+            });
+            
+            // Create season sections
+            Object.keys(seasons).sort().forEach(season => {
+                const seasonSection = this.createSeasonSection(season, seasons[season]);
+                showSection.appendChild(seasonSection);
+            });
+        }
         
         return showSection;
     }
